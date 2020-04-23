@@ -96,8 +96,8 @@ HEALTHCHECK --interval=10s --timeout=5s --start-period=120s \
     CMD mcstatus localhost:$( cat $PROPERTIES | grep "server-port" | cut -d'=' -f2 ) ping
 
 ### Obtain scripts
-ADD docker-entrypoint.sh docker-entrypoint.sh
-RUN chmod +x docker-entrypoint.sh
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 USER ${USER}
 
@@ -132,6 +132,5 @@ EXPOSE 25565
 ######################################
 ### Entrypoint is the start script ###
 ######################################
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["java"]
+ENTRYPOINT ["tini" "--" "/docker-entrypoint.sh"]
 

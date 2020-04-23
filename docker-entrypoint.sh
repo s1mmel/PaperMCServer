@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ash
 set -e
 
 if [[ "$1" = 'tini' ]];  then
