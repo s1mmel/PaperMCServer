@@ -132,5 +132,5 @@ EXPOSE 25565
 ######################################
 ### Entrypoint is the start script ###
 ######################################
-ENTRYPOINT ["tini" "--" "/docker-entrypoint.sh"]
+ENTRYPOINT ["/tini" "--" "/docker-entrypoint.sh"]
 
