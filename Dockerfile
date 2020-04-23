@@ -52,7 +52,7 @@ FROM alpine:3.11 AS runtime
 LABEL maintainer ="s1mmel <mc_simmel@hotmail.com>"
 ENV LANG=C.UTF-8 \
     TZ=Europe/Berlin
-RUN apk add --no-cache py3-pip openjdk11-jre-headless ca-certificates tzdata tini --repository=http://ftp.halifax.rwth-aachen.de/alpine/v3.11/community/\
+RUN apk add --no-cache py3-pip openjdk11-jre-headless ca-certificates tzdata tini bash --repository=http://ftp.halifax.rwth-aachen.de/alpine/v3.11/community/\
 && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #############################
@@ -133,4 +133,3 @@ EXPOSE 25565
 ### Entrypoint is the start script ###
 ######################################
 ENTRYPOINT ["/sbin/tini", "--", "/docker-entrypoint.sh"]
-
