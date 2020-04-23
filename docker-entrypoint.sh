@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-if [[ "$1" = 'tini' ]];  then
+if [[ "$1" = '/sbin/tini' ]];  then
 
   # Start server
   /usr/bin/java -jar $JAVA_ARGS \
