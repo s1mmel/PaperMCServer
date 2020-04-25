@@ -52,7 +52,7 @@ FROM alpine:3.11 AS runtime
 LABEL maintainer ="s1mmel <mc_simmel@hotmail.com>"
 ENV LANG=C.UTF-8 \
     TZ=Europe/Berlin
-RUN apk add --no-cache py3-pip openjdk11-jre-headless ca-certificates tzdata tini --repository=http://ftp.halifax.rwth-aachen.de/alpine/v3.11/community/\
+RUN apk add --no-cache py3-pip openjdk11-jre-headless ca-certificates tzdata tini bash --repository=http://ftp.halifax.rwth-aachen.de/alpine/v3.11/community/\
 && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #############################
@@ -96,8 +96,8 @@ HEALTHCHECK --interval=10s --timeout=5s --start-period=120s \
     CMD mcstatus localhost:$( cat $PROPERTIES | grep "server-port" | cut -d'=' -f2 ) ping
 
 ### Obtain scripts
-ADD docker-entrypoint.sh docker-entrypoint.sh
-RUN chmod +x docker-entrypoint.sh
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 USER ${USER}
 
@@ -133,5 +133,4 @@ EXPOSE 25565
 ### Entrypoint is the start script ###
 ######################################
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["java"]
-
+CMD ["/sbin/tini", "--"]
