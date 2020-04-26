@@ -1,5 +1,17 @@
 # PaperMCServer
-This Dockerfile (entrypoint is tini) will build an Alpine-image based Paper Minecraft Server with openjdk11
+
+Disclaimer: Please see the License section, before using and/or bulding this Dockerimage
+
+## Dockerimage 
+You can get the built container image from
+<https://hub.docker.com/repository/docker/s1mmel/papermcserver>
+
+Sign in and pull the image
+`docker pull s1mmel/papermcserver`
+
+## Dockerfile
+
+The Dockerfile (entrypoint is tini) will build an Alpine-image based Paper Minecraft Server with openjdk11
 It has two parts. The first part downloads a jar file from the paper api 
 <https://paper.readthedocs.io/en/latest/site/api.html>. Executing the downloaded jar will then download 
 the minecraft server jar file from Mojang and patch it. The patched jar is copied to the second container which 
@@ -13,13 +25,6 @@ The project is present on github, see here <https://github.com/PaperMC>
 
 ### What is Minecraft?
 Have you been living under a rock ;-) ? The game Minecraft has sold over 180,000,000 copies (November 18, 2011) according to Wikipedia
-
-## Dockerimage 
-You can get the built container image from
-<https://hub.docker.com/repository/docker/s1mmel/papermcserver>
-
-Sign in and pull the image
-`docker pull s1mmel/papermcserver`
 
 ## ToDo's
 * Clean up mess
@@ -58,8 +63,6 @@ The server is already up and running, but I'd like to implement
 <https://www.spigotmc.org/resources/auctionhouse.61836/>
 <https://thebreakdown.xyz/top-10-plugins-for-bukkit-spigot-servers/>
 
-* open up ssh for further configuration 
+* open up ssh for further configuration and copying files (creating keys with password) Maybe expand this to an ansible approach?
 
 * optional mysql-db as docker container if there are plugins with db support
-
-
