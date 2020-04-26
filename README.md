@@ -1,5 +1,5 @@
 # PaperMCServer
-This Dockerfile (entrypoint script included) will build an Alpine-image based Paper Minecraft Server with openjdk11
+This Dockerfile (entrypoint is tini) will build an Alpine-image based Paper Minecraft Server with openjdk11
 It has two parts. The first part downloads a jar file from the paper api 
 <https://paper.readthedocs.io/en/latest/site/api.html>. Executing the downloaded jar will then download 
 the minecraft server jar file from Mojang and patch it. The patched jar is copied to the second container which 
@@ -25,7 +25,7 @@ Sign in and pull the image
 * Clean up mess
 * more bash less Dockerfile
 * thinking about separating build and runtime
-* group and describe variables/parameters, etc.
+* group, mark and describe variables/parameters, etc.
 * make a small concept for a mod/config pack 
 
 ## License Agreement
