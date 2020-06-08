@@ -2,25 +2,25 @@
 ##################### BUILD PHASE ###
 #####################################
 
-###########################################
-### Alpine Base image from adoptopenjdk ###
-###########################################
+#########################
+### Alpine Base image ###
+#########################
 
 FROM alpine:3.11 AS build
 LABEL maintainer ="s1mmel <mc_simmel@hotmail.com>"
-RUN apk add --no-cache openjdk11-jre-headless ca-certificates tzdata tini --repository=http://ftp.halifax.rwth-aachen.de/alpine/v3.11/community/\
-&& ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #################
 ### Arguments ###
 #################
 
-### adoptopenjdk Java image Version
-ARG APK_JAVA=openjdk:15
-### PaperMC / MC Version
-ARG PAPER_VERSION=1.15.2
-### Download Site for PaperMC
-ARG PAPER_URL=https://papermc.io/api/v1/paper/${PAPER_VERSION}/latest/download
+### openjdk Java image Version
+ARG APK_JAVA=openjdk11-jre-headless
+### APK local repo
+ARG APK_REPO="http://ftp.halifax.rwth-aachen.de/alpine/v3.11/community/"
+### Minecraft Version to download and patch
+ARG MC_VERSION=1.15.2
+### Download API from Papermc
+ARG PAPER_API=https://papermc.io/api/v1/paper/${MC_VERSION}/latest/download
 
 #####################
 ### ENV Variables ###
@@ -33,7 +33,9 @@ ENV MINECRAFT_PATH=/opt/srv/minecraft
 WORKDIR ${MINECRAFT_PATH}
 
 ### Download paperclip
-ADD ${PAPER_URL} paper.jar
+ADD ${PAPER_API} paper.jar
+
+RUN apk add --no-cache ${APK_JAVA} ca-certificates --repository=${APK_REPO}
 
 ### Run paperclip and patch it
 ### Copy built jar
@@ -44,16 +46,21 @@ RUN mv ${MINECRAFT_PATH}/cache/patched*.jar ${MINECRAFT_PATH}/paper.jar
 ######################### Runtime Environment ###
 #################################################
 
-###########################################
-### Alpine Base image from adoptopenjdk ###
-###########################################
+#########################
+### Alpine Base image ###
+#########################
 
 FROM alpine:3.11 AS runtime
 LABEL maintainer ="s1mmel <mc_simmel@hotmail.com>"
-ENV LANG=C.UTF-8 \
-    TZ=Europe/Berlin
-RUN apk add --no-cache py3-pip openjdk11-jre-headless ca-certificates tzdata tini bash --repository=http://ftp.halifax.rwth-aachen.de/alpine/v3.11/community/\
-&& ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+#################
+### Arguments ###
+#################
+
+### openjdk Java image Version
+ARG APK_JAVA=openjdk11-jre-headless
+### APK local repo
+ARG APK_REPO="http://ftp.halifax.rwth-aachen.de/alpine/v3.11/community/"
 
 #############################
 ### Environment Variables ###
@@ -73,6 +80,12 @@ ENV JAVA_HEAP_SIZE=4G
 ENV JAVA_ARGS="-XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:MaxGCPauseMillis=100 -XX:+DisableExplicitGC -XX:TargetSurvivorRatio=90 -XX:G1NewSizePercent=50 -XX:G1MaxNewSizePercent=80 -XX:G1MixedGCLiveThresholdPercent=35 -XX:+AlwaysPreTouch -XX:+ParallelRefProcEnabled -Dusing.aikars.flags=mcflags.emc.gs -server -Dcom.mojang.eula.agree=true"
 ENV SPIGOT_ARGS="--nojline"
 ENV PAPER_ARGS=""
+ENV LANG=C.UTF-8
+ENV TZ=Europe/Berlin
+
+
+RUN apk add --no-cache py3-pip ${APK_JAVA} ca-certificates tzdata tini bash --repository=${APK_REPO} &&\
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ### Working directory
 WORKDIR ${SERVER_PATH}
@@ -88,7 +101,6 @@ RUN addgroup "$USER" --gid "$GID" &&\
     adduser --disabled-password --gecos "" --home "$(pwd)" --ingroup "$USER" --no-create-home --uid "$UID" "$USER" &&\
     mkdir ${LOGS_PATH} ${DATA_PATH} ${WORLDS_PATH} ${PLUGINS_PATH} ${CONFIG_PATH} && \
     chown -R ${USER}:${USER} ${MINECRAFT_PATH} &&\
-    cat /etc/passwd &&\
     pip3 install mcstatus
 
 ### Healthcheck with MCstatus
